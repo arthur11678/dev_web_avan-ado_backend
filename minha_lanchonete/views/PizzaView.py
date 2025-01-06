@@ -7,7 +7,7 @@ from minha_lanchonete.models import Pizza, Product
 from minha_lanchonete.serializers import PizzaSerializer
 from users.helpers import UserHelper
 
-class PizzaView(viewsets.GenericViewSet, mixins.CreateModelMixin):
+class PizzaView(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.ListModelMixin):
     
     queryset = Pizza.objects.all()
     serializer_class = PizzaSerializer
@@ -20,4 +20,8 @@ class PizzaView(viewsets.GenericViewSet, mixins.CreateModelMixin):
         product.save()
         pizza = Pizza.objects.create(product=product, size=request.data['size'], description=request.data['description'])
         pizza.save()
-        return Response(data=PizzaSerializer(pizza, many=False))
+        return Response(data=PizzaSerializer(pizza, many=False).data)
+    
+    def list(self, request):
+        pizzas = Pizza.objects.all()
+        return Response(data=PizzaSerializer(pizzas, many=True).data)
