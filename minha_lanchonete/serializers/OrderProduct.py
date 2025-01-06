@@ -3,7 +3,7 @@ from minha_lanchonete.models import OrderProduct
 from minha_lanchonete.serializers.Order import OrderSerializer
 from minha_lanchonete.serializers.Product import ProductSerializer
 
-class OrderProductSerializer(serializers.Serializer):
+class OrderProductSerializer(serializers.ModelSerializer):
     
     order = OrderSerializer(many=False)
     product = ProductSerializer(many=False)

@@ -5,7 +5,7 @@ from minha_lanchonete.helpers import ProductHelper
 
 from users.serializers import ClientSerializer
 
-class OrderSerializer(serializers.Serializer):
+class OrderSerializer(serializers.ModelSerializer):
     
     client = ClientSerializer(many=False)
     payment_method = PaymentMethodSerializer(many=False)
@@ -14,7 +14,7 @@ class OrderSerializer(serializers.Serializer):
         model = Order
         fields = ("id", "ordered_at", "client", "payment_method")
         
-class OrderWithProductsSerializer(serializers.Serializer):
+class OrderWithProductsSerializer(serializers.ModelSerializer):
     
     client = ClientSerializer(many=False)
     payment_method = PaymentMethodSerializer(many=False)
