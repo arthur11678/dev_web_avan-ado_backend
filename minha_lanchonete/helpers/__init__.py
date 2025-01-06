@@ -1,1 +1,1 @@
-from ProductHelper import *
+from .ProductHelper import *
