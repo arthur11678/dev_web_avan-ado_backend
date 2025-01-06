@@ -4,11 +4,11 @@ from .Product import Product
 
 class OrderProduct(models.Model):
     id = models.AutoField(primary_key=True)
-    id_order = models.ForeignKey(Order, on_delete=models.CASCADE)
-    id_product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    order = models.ForeignKey(Order, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
     
     def __str__(self):
-        return str(self.id_product.name)
+        return str(self.product.name)
     
     class Meta:
         db_table = 'order_product'

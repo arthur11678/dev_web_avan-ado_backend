@@ -23,9 +23,11 @@ class AdminsView(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins.ListMo
         email = request.data['email']
         user = User.objects.create(name=name, phone=phone, email=email)
         user.set_password(request.data['password'])
+        user.save()
         pis_pasep = request.data['pis_pasep']
         admission_at = request.data['admission_at']
         admin = Admin.objects.create(user=user, pis_pasep=pis_pasep, admission_at=admission_at)
+        admin.save()
         return Response(status=204)
 
     def retrieve(self, request, *args, **kwargs):

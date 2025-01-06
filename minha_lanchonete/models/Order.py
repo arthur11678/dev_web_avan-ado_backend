@@ -5,8 +5,8 @@ from users.models.Client import Client
 class Order(models.Model):
     id = models.AutoField(primary_key=True)
     ordered_at = models.DateTimeField(auto_now_add=True)
-    id_client = models.ForeignKey(Client, on_delete=models.CASCADE)
-    id_payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    payment_method = models.ForeignKey(PaymentMethod, on_delete=models.CASCADE)
     
     def __str__(self):
         return str(self.id)

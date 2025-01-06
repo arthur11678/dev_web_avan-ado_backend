@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models import Drink
+from minha_lanchonete.models import Drink
 
 class DrinkSerializer(serializers.Serializer):
     

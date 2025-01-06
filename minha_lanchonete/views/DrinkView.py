@@ -17,5 +17,7 @@ class DrinkView(viewsets.GenericViewSet, mixins.CreateModelMixin):
         if(not UserHelper.is_admin(request.user)):
             return(Response(status=403))
         product = Product.objects.create(name=request.data['name'], picture=request.data['picture'], value=request.data['value'])
-        drink = Drink.objects.create(id_product=product.id, volume=request.data['volume'], type=request.data['type'])
+        product.save()
+        drink = Drink.objects.create(product=product, volume=request.data['volume'], type=request.data['type'])
+        drink.save()
         return Response(data=DrinkSerializer(drink, many=False))

@@ -16,14 +16,6 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     password = serializers.CharField(write_only=True, required=True)
     
-    cpf = serializers.CharField(
-            max_length=11,
-            required=True,
-            validators=[UniqueValidator(queryset=Client.objects.all(), message="Já existe um usuário cadastrado com esse CPF.")]
-            )
-    
-    address = serializers.CharField(required=True)
-    
     def create(self, validated_data):
         password = validated_data.pop("password")
         name = validated_data.pop("name")
@@ -33,6 +25,7 @@ class RegisterSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         client = Client.objects.create(**validated_data, user=user)
+        client.save()
         return user
     
     class Meta:

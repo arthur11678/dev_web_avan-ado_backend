@@ -3,7 +3,9 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
 from minha_lanchonete.models import Order, OrderProduct
-from minha_lanchonete.serializers import OrderSerializer
+from minha_lanchonete.serializers import OrderSerializer, OrderWithProductsSerializer
+
+from users.helpers import UserHelper
 
 
 class OrderView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateModelMixin, mixins.UpdateModelMixin):
@@ -13,11 +15,29 @@ class OrderView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateMod
     permission_classes = [IsAuthenticated]
     
     def list(self, request, *args, **kwargs):
-        orders = Order.objects.all()
-        return Response(data=OrderSerializer(orders, many=True).data)
+        if(UserHelper.is_admin(request.user)):
+            orders = Order.objects.all()
+            return Response(data=OrderWithProductsSerializer(orders, many=True).data)
+        elif(UserHelper.is_client(request.user)):
+            orders = Order.objects.filter(client=request.user.client)
+            return Response(data=OrderWithProductsSerializer(orders, many=True))
+        else:
+            return Response(status=500)
     
     def update(self, request, *args, **kwargs):
+        if(not UserHelper.is_admin(request.user)):
+            return Response(status=403)
         instance = self.get_object()
         instance.status = request.data['status']
         instance.save()
-        return Response(data=OrderSerializer(instance, many=False).data)
+        return Response(data=OrderWithProductsSerializer(instance, many=False).data)
+    
+    def create(self, request, *args, **kwargs):
+        if(not UserHelper.is_client(request.user)):
+           return Response(status=403) 
+        order = Order.objects.create(payment_method=request.data['payment_method'], client=request.user.client)
+        order.save()
+        for product in request.data['products']:
+            order_product = OrderProduct.objects.create(order=order, product=product)
+            order_product.save()
+        return Response(data=OrderWithProductsSerializer(order, many=False))

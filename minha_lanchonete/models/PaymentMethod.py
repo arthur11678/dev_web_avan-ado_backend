@@ -3,7 +3,7 @@ from users.models.Client import Client
 
 class PaymentMethod(models.Model):
     id = models.AutoField(primary_key=True)
-    id_client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    client = models.ForeignKey(Client, on_delete=models.CASCADE)
     number = models.CharField(max_length=12, unique=True)
     
     def __str__(self):

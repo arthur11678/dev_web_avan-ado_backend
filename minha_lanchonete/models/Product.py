@@ -2,7 +2,7 @@ from django.db import models
 
 class Product(models.Model):
     id = models.AutoField(primary_key=True)
-    name = models.CharField()
+    name = models.CharField(max_length=60)
     picture = models.ImageField()
     value = models.IntegerField()
     

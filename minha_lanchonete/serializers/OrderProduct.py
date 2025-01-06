@@ -1,13 +1,13 @@
 from rest_framework import serializers
-from models.OrderProduct import OrderProduct
-from serializers.Order import OrderSerializer
-from serializers.Product import ProductSerializer
+from minha_lanchonete.models import OrderProduct
+from minha_lanchonete.serializers.Order import OrderSerializer
+from minha_lanchonete.serializers.Product import ProductSerializer
 
 class OrderProductSerializer(serializers.Serializer):
     
-    id_order = OrderSerializer(many=False)
-    id_product = ProductSerializer(many=False)
+    order = OrderSerializer(many=False)
+    product = ProductSerializer(many=False)
     
     class Meta:
         model = OrderProduct
-        fields = ("id", "id_order", "id_product")
+        fields = ("id", "order", "product")

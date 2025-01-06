@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from models.Pizza import Pizza
+from minha_lanchonete.models.Pizza import Pizza
 
 
 class PizzaSerializer(serializers.Serializer):

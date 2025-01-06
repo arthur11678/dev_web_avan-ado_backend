@@ -17,5 +17,7 @@ class PizzaView(viewsets.GenericViewSet, mixins.CreateModelMixin):
         if(not UserHelper.is_admin(request.user)):
             return(Response(status=403))
         product = Product.objects.create(name=request.data['name'], picture=request.data['picture'], value=request.data['value'])
-        pizza = Pizza.objects.create(id_product=product.id, size=request.data['size'], description=request.data['description'])
+        product.save()
+        pizza = Pizza.objects.create(product=product, size=request.data['size'], description=request.data['description'])
+        pizza.save()
         return Response(data=PizzaSerializer(pizza, many=False))
