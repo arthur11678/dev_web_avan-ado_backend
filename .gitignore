@@ -1,0 +1,15 @@
+*.pyc
+*.pyt
+*.pot
+
+.env
+
+.vscode
+*.log
+dump.json
+secrets.json
+
+__pycache__/
+*/__pycache__/
+**/__pycache__/
+media/
