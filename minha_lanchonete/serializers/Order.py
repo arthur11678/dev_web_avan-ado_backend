@@ -3,6 +3,7 @@ from minha_lanchonete.models import Order, OrderProduct
 from minha_lanchonete.serializers.PaymentMethod import PaymentMethodSerializer
 from minha_lanchonete.helpers import ProductHelper
 
+from minha_lanchonete.serializers.Product import PizzaProductSerializer, DrinkProductSerializer
 from users.serializers import ClientSerializer
 
 class OrderSerializer(serializers.ModelSerializer):
@@ -17,30 +18,23 @@ class OrderSerializer(serializers.ModelSerializer):
 class OrderWithProductsSerializer(serializers.ModelSerializer):
     
     client = ClientSerializer(many=False)
-    payment_method = PaymentMethodSerializer(many=False)
+    payment_method = serializers.SerializerMethodField()
     products = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
-        fields = ("id", "ordered_at", "client", "id_payment_method", "products")
+        fields = ("id", "ordered_at", "client", "payment_method", "products")
+    
+    def get_payment_method(self, obj):
+        return obj.payment_method.number
         
     def get_products(self, obj):
-        order_products = OrderProduct.objects.filter(id_order=obj.id)
-        field = []
+        order_products = OrderProduct.objects.filter(order=obj)
+        products = []
         for order_product in order_products:
-            if(ProductHelper.is_drink(order_product.product)):    
-                field.append({
-                    "id": order_product.product.id,
-                    "name": order_product.product.name,
-                    "value": order_product.product.value,
-                    "volume": order_product.product.drink.volume,
-                    "type": order_product.product.drink.type
-                })
-            if(ProductHelper.is_pizza(order_product.product)):
-                field.append({
-                    "id": order_product.product.id,
-                    "name": order_product.product.name,
-                    "value": order_product.product.value,
-                    "size": order_product.product.pizza.size,
-                    "description": order_product.product.pizza.description
-                })
+            product = order_product.product
+            if(ProductHelper.is_drink(product)):    
+                products.append(DrinkProductSerializer(product, many=False).data)
+            if(ProductHelper.is_pizza(product)):
+                products.append(PizzaProductSerializer(product, many=False).data)
+        return products

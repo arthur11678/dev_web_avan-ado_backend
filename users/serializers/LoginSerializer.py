@@ -1,6 +1,6 @@
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from users.models import User
-from users.serializers.UserSerializer import AdminSerializer, ClientSerializer
+from users.serializers.UserSerializer import UserAdminSerializer, UserClientSerializer
 
 from users.helpers import UserHelper
 
@@ -16,8 +16,8 @@ class LoginSerializer(TokenObtainPairSerializer):
         user = User.objects.get(email=self.user)
         serializer = None
         if UserHelper.is_admin(user):
-            serializer = AdminSerializer(user)
+            serializer = UserAdminSerializer(user)
         else:
-            serializer = ClientSerializer(user)
+            serializer = UserClientSerializer(user)
         data["user"] = serializer.data
         return data

@@ -2,7 +2,7 @@ from rest_framework import viewsets, mixins
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 
-from minha_lanchonete.models import Order, OrderProduct
+from minha_lanchonete.models import Order, OrderProduct, PaymentMethod, Product
 from minha_lanchonete.serializers import OrderSerializer, OrderWithProductsSerializer
 
 from users.helpers import UserHelper
@@ -20,7 +20,7 @@ class OrderView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateMod
             return Response(data=OrderWithProductsSerializer(orders, many=True).data)
         elif(UserHelper.is_client(request.user)):
             orders = Order.objects.filter(client=request.user.client)
-            return Response(data=OrderWithProductsSerializer(orders, many=True))
+            return Response(data=OrderWithProductsSerializer(orders, many=True).data)
         else:
             return Response(status=500)
     
@@ -35,9 +35,13 @@ class OrderView(viewsets.GenericViewSet, mixins.ListModelMixin, mixins.CreateMod
     def create(self, request, *args, **kwargs):
         if(not UserHelper.is_client(request.user)):
            return Response(status=403) 
-        order = Order.objects.create(payment_method=request.data['payment_method'], client=request.user.client)
+        payment_method = PaymentMethod.objects.get(id=request.data['payment_method'])
+        if(payment_method.client != request.user.client):
+            return Response(status=403)
+        order = Order.objects.create(payment_method=payment_method, client=request.user.client)
         order.save()
         for product in request.data['products']:
-            order_product = OrderProduct.objects.create(order=order, product=product)
+            p = Product.objects.get(id=product)
+            order_product = OrderProduct.objects.create(order=order, product=p)
             order_product.save()
-        return Response(data=OrderWithProductsSerializer(order, many=False))
+        return Response(data=OrderWithProductsSerializer(order, many=False).data)

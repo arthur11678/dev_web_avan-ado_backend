@@ -14,4 +14,5 @@ class PaymentMethod(models.Model):
         managed = True
         verbose_name = 'PaymentMethod'
         verbose_name_plural = 'PaymentMethods'
+        unique_together = ("client", "number")
         ordering = ["-id"]

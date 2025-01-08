@@ -20,13 +20,16 @@ class PaymentMethodView(viewsets.GenericViewSet, mixins.CreateModelMixin, mixins
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
-        if(UserHelper.is_client(request.user) and instance.client != request.user.client.id):
+        if(UserHelper.is_client(request.user) and instance.client != request.user.client):
             return(Response(status=403))
         return super().destroy(request, *args, **kwargs)
     
     def create(self, request, *args, **kwargs):
         if(not UserHelper.is_client(request.user)):
             return(Response(status=403))
-        payment_method = PaymentMethod.objects.create(number=request.data['number'], client=request.user.client)
-        payment_method.save()
-        return Response(data=PaymentMethodSerializer(payment_method, many=False))
+        try:
+            payment_method = PaymentMethod.objects.create(number=request.data['number'], client=request.user.client)
+            payment_method.save()
+            return Response(data=PaymentMethodSerializer(payment_method, many=False).data)
+        except :
+            return Response(status=400)
