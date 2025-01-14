@@ -23,16 +23,8 @@ class ProductView(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.List
         if(not UserHelper.is_admin(request.user)):
             return Response(status=403)
         instance = self.get_object()
-        if(ProductHelper.is_drink(instance)):
-            drink = Drink.objects.get(id=instance.drink.id)
-            drink.delete()
-            return super().destroy(request, *args, **kwargs)
-        elif(ProductHelper.is_pizza(instance)):
-            pizza = Pizza.objects.get(id=instance.pizza.id)
-            pizza.delete()
-            return super().destroy(request, *args, **kwargs)
-        else:
-            return Response(status=500)
+        instance.delete()
+        return Response(status=200)
     
     def update(self, request, *args, **kwargs):
         if(not UserHelper.is_admin(request.user)):
