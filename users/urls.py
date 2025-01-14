@@ -11,5 +11,5 @@ urlpatterns = [
     path('sign-up', views.RegisterView.as_view(), name="auth_register"),
     path('users/admins', views.AdminsView.as_view({"get": "list", "post": "create"}), name='admins_view'),
     path('users', views.UsersView.as_view({'get': 'list'}), name="user_view"),
-    path("users/<int:pk>", views.UsersView.destroy)
+    path("users/<int:pk>", views.UsersView.as_view({"delete": "destroy"}), name="user_view_destroy")
 ]

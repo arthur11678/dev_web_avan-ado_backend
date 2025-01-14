@@ -22,7 +22,5 @@ class UsersView(viewsets.GenericViewSet, mixins.ListModelMixin):
         if(not UserHelper.is_admin(request.user)):
             return Response(status=403)
         instance = self.get_object()
-        breakpoint()
         instance.delete()
-        instance.save()
         return Response(status=200)

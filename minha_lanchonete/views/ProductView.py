@@ -26,12 +26,10 @@ class ProductView(viewsets.GenericViewSet, mixins.DestroyModelMixin, mixins.List
         if(ProductHelper.is_drink(instance)):
             drink = Drink.objects.get(id=instance.drink.id)
             drink.delete()
-            drink.save()
             return super().destroy(request, *args, **kwargs)
         elif(ProductHelper.is_pizza(instance)):
             pizza = Pizza.objects.get(id=instance.pizza.id)
             pizza.delete()
-            pizza.save()
             return super().destroy(request, *args, **kwargs)
         else:
             return Response(status=500)
